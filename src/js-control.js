@@ -1,4 +1,6 @@
 import './js-control.css';
+import Cropper from 'cropperjs'
+
 /**
  * This JSDoc type def represents the data coming into your control from Decisions,
  * when `setValue` is called.
@@ -24,17 +26,19 @@ if (process.env.NODE_ENV === 'development') {
  * JSControl class. Name of class will become name of functional constructor that
  * Decisions will call to create an instance of your control.
  * 1. Rename to reflect the name of your JS Control
- * @typedef {DecisionsJsControl} JsControlName
+ * @typedef {DecisionsJsControl} ImageEditorControl
  */
-export class JsControlName {
+export class ImageEditorControl {
   /** @type {HTMLElement} parent element, within which to render your control. */
   parentElement;
 
   /** @type {JQuery<HTMLElement>} host */
   host;
 
-  /** @type {HTMLLabelElement} */
-  labelWrapper;
+  /** @type {HTMLDivElement} */
+  divWrapper;
+  /** @type {HTMLDivElement} */
+  divCropper;
 
   /**@type {HTMLSpanElement} */
   labelText;
@@ -42,16 +46,64 @@ export class JsControlName {
   /** @type {HTMLInputElement} */
   input;
 
+  /** @type {HTMLCanvasElement} */
+  canvasUpload;
+
+  init_height = "600px";
+
+  /** @type {Cropper} */
+  cpCropper;
+
   constructor() {
-    this.labelWrapper = document.createElement('label');
-    this.labelWrapper.style.border = "dashed purple 1px";
-    this.labelWrapper.className = 'my-label-wrapper';
+    this.divWrapper = document.createElement('div');
+    this.divWrapper.style.border = 'dashed purple 1px';
+    this.divWrapper.className = 'my-label-wrapper';
+    this.divCropper = document.createElement('span');
+    this.divCropper.id = 'divCropper';
     this.labelText = document.createElement('span');
     this.labelText.className = 'my-label-text';
-    this.labelWrapper.appendChild(this.labelText);
+    this.divWrapper.appendChild(this.labelText);
     this.input = document.createElement('input');
     this.input.className = 'my-input';
-    this.labelWrapper.appendChild(this.input);
+    this.input.type = 'file';
+    this.divWrapper.appendChild(this.input);
+    this.canvasUpload = document.createElement('img');
+    this.canvasUpload.id = 'canvasUpload';
+    this.divCropper.style = 'max-height: 100%;display: block';
+    this.divCropper.appendChild(this.canvasUpload);
+    this.divWrapper.appendChild(this.divCropper);
+  }
+
+  loadFile(ev) {
+    var files = ev.target.files; // FileList object
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var c0 = document.getElementById('canvasUpload')
+      var css = { height : "500px", width : 'auto'};
+      c0.css = css;
+      c0.src = reader.result;
+      if (!c0.cropper) {
+        new Cropper(c0, {
+          viewMode: 2,
+          dragMode: 'move',
+          aspectRatio: 4/5,
+          minContainerHeight: 500,
+          crop: function (event) {
+            console.log(event.detail.x);
+            console.log(event.detail.y);
+            console.log(event.detail.width);
+            console.log(event.detail.height);
+            console.log(event.detail.rotate);
+            console.log(event.detail.scaleX);
+            console.log(event.detail.scaleY);
+          },
+        });
+      }
+      else {
+        c0.cropper.replace(reader.result);
+      }
+    };
+    reader.readAsDataURL(files[0]);
   }
 
   /**
@@ -65,7 +117,10 @@ export class JsControlName {
   initialize(host) {
     this.host = host;
     this.parentElement = host[0];
-    this.parentElement.appendChild(this.labelWrapper);
+    this.parentElement.appendChild(this.divWrapper);
+    this.input.addEventListener('change', (ev) => {
+      this.loadFile(ev);
+    });
   }
 
   /**
@@ -75,7 +130,7 @@ export class JsControlName {
   setValue(values) {
     // store any data your control needs to store
     this.labelText.innerText = values.name;
-    this.input.value = values.value;
+    //this.input.value = values.value;
   }
 
   /**
@@ -96,4 +151,4 @@ export class JsControlName {
 }
 
 // add constructor to global context.
-window.JsControlName = JsControlName;
+window.ImageEditorControl = ImageEditorControl;

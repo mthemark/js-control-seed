@@ -50,7 +50,7 @@ export function initializeTestBed(control: DecisionsJsControl) {
   sidebar.append(getValueBtn);
   sidebar.append(valuePreview);
   
-  testbed.append(sidebar);
+  //testbed.append(sidebar);
   testbed.append(container);
   
   body.append(testbed);

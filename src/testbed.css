@@ -6,7 +6,7 @@ body {
 
 .testbed {
   background: #eee;
-  display: flex;
+  /* display: flex; */
   justify-content: stretch;
   height: 100%;
   

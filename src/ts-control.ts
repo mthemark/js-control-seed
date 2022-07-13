@@ -25,9 +25,9 @@ if (process.env.NODE_ENV === 'development') {
  * JSControl class. Name of class will become name of functional constructor that
  * Decisions will call to create an instance of your control.
  * 1. Rename to reflect the name of your JS Control
- * @typedef {DecisionsJsControl} JsControlName
+ * @typedef {DecisionsJsControl} ImageEditorControl
  */
-export class JsControlName {
+export class ImageEditorControl {
   // Declare control variable in class() which de-sugars to an IIFE when transpiled to ES5
 
   /**
@@ -100,4 +100,4 @@ export class JsControlName {
 }
 
 // add constructor to global context.
-(window as any).JsControlName = JsControlName;
+(window as any).ImageEditorControl = ImageEditorControl;

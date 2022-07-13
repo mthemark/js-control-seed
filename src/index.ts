@@ -1,6 +1,6 @@
 import './testbed.css';
 import { initializeTestBed } from './testbed';
-import { JsControlName } from './ts-control';
+import { ImageEditorControl } from './ts-control';
 import { value } from './value';
 
 /**
@@ -8,7 +8,7 @@ import { value } from './value';
  * instantiate, initialize, and setValue, getValue, resize, etc.
  */
 
-const control = new JsControlName();
+const control = new ImageEditorControl();
 const host = initializeTestBed(control);
 control.initialize(host);
 

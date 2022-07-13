@@ -10,7 +10,7 @@ This project relies on NodeJS 8.2+ for dev server and compilation.
 
 A JS Control can be authored from the provided boilerplate in either JavaScript or TypeScript.
 
-The boilerplate class name is `JsControlName` which is also reflected in [js-control.config.js](./js-control.config.js) 
+The boilerplate class name is `ImageEditorControl` which is also reflected in [js-control.config.js](./js-control.config.js) 
 The first thing you should do is a global find-replace of that string with the name of your control.
 
 This configuration uses `ts-loader` to transpile TypeScript, or ES+ JavaScript to ES5 JavaScript.
