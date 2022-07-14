@@ -1,4 +1,5 @@
 import './js-control.css';
+import 'cropperjs/dist/cropper.css'
 import Cropper from 'cropperjs'
 
 /**
@@ -58,6 +59,7 @@ export class ImageEditorControl {
   canvasOutput;
 
   outputFile;
+  outputBlob;
 
   outputHeight = 720;
 
@@ -160,6 +162,7 @@ export class ImageEditorControl {
           height: this.outputHeight,
           imageSmoothingEnabled: false,
         }).toBlob((blob) => {
+          this.outputBlob = blob;
           this.outputFile = new File([blob], "cropped.image.png", { lastModified: new Date().getTime(), type: blob.type });
           //auto download
           this.download();
@@ -193,7 +196,12 @@ export class ImageEditorControl {
   getValue() {
     return {
       value: this.inputFile.value,
-      outputFile: this.outputFile
+      outputFile: this.outputFile,
+      outputDataURL: this.canvasUpload.cropper.getCroppedCanvas({
+        height: this.outputHeight,
+        imageSmoothingEnabled: false,
+      }).toDataURL(this.outputFile.type),
+      outputBlob: this.outputBlob,
     };
   }
 }
