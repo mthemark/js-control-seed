@@ -39,15 +39,27 @@ export class ImageEditorControl {
   divWrapper;
   /** @type {HTMLDivElement} */
   divCropper;
+  /** @type {HTMLDivElement} */
+  divControls;
 
   /**@type {HTMLSpanElement} */
   labelText;
 
   /** @type {HTMLInputElement} */
-  input;
+  inputFile;
+
+  /** @type {HTMLInputElement} */
+  inputCrop;
 
   /** @type {HTMLCanvasElement} */
   canvasUpload;
+
+  /** @type {HTMLCanvasElement} */
+  canvasOutput;
+
+  outputFile;
+
+  outputHeight = 720;
 
   init_height = "600px";
 
@@ -55,23 +67,33 @@ export class ImageEditorControl {
   cpCropper;
 
   constructor() {
+    this.divFullControl = document.createElement('div');
     this.divWrapper = document.createElement('div');
-    this.divWrapper.style.border = 'dashed purple 1px';
-    this.divWrapper.className = 'my-label-wrapper';
+    this.divWrapper.className = 'cropper-wrapper';
     this.divCropper = document.createElement('span');
     this.divCropper.id = 'divCropper';
     this.labelText = document.createElement('span');
-    this.labelText.className = 'my-label-text';
+    this.labelText.className = 'cropper-wrapper-text';
+    this.labelText.innerText = 'Upload Image'
     this.divWrapper.appendChild(this.labelText);
-    this.input = document.createElement('input');
-    this.input.className = 'my-input';
-    this.input.type = 'file';
-    this.divWrapper.appendChild(this.input);
+    this.inputFile = document.createElement('input');
+    this.inputFile.className = 'common-input';
+    this.inputFile.type = 'file';
+    this.divWrapper.appendChild(this.inputFile);
     this.canvasUpload = document.createElement('img');
     this.canvasUpload.id = 'canvasUpload';
-    this.divCropper.style = 'max-height: 100%;display: block';
+    this.divCropper.className = 'divCropper';
     this.divCropper.appendChild(this.canvasUpload);
     this.divWrapper.appendChild(this.divCropper);
+    this.divControls = document.createElement('div');
+    this.inputCrop = document.createElement('input');
+    this.inputCrop.value = 'Crop Image';
+    this.inputCrop.className = 'common-input';
+    this.inputCrop.type = 'button';
+    this.divControls.className = 'controls-wrapper';
+    this.divControls.appendChild(this.inputCrop);
+    this.divFullControl.appendChild(this.divWrapper);
+    this.divFullControl.appendChild(this.divControls);
   }
 
   loadFile(ev) {
@@ -79,14 +101,14 @@ export class ImageEditorControl {
     var reader = new FileReader();
     reader.onload = function (e) {
       var c0 = document.getElementById('canvasUpload')
-      var css = { height : "500px", width : 'auto'};
+      var css = { height: "500px", width: 'auto' };
       c0.css = css;
       c0.src = reader.result;
       if (!c0.cropper) {
         new Cropper(c0, {
           viewMode: 2,
           dragMode: 'move',
-          aspectRatio: 4/5,
+          aspectRatio: 4 / 5,
           minContainerHeight: 500,
           crop: function (event) {
             console.log(event.detail.x);
@@ -106,6 +128,15 @@ export class ImageEditorControl {
     reader.readAsDataURL(files[0]);
   }
 
+  download() {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(this.outputFile);
+    a.download = this.outputFile.name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  }
   /**
    * Do any work that needs to be done once for your control.
    *
@@ -117,9 +148,23 @@ export class ImageEditorControl {
   initialize(host) {
     this.host = host;
     this.parentElement = host[0];
-    this.parentElement.appendChild(this.divWrapper);
-    this.input.addEventListener('change', (ev) => {
-      this.loadFile(ev);
+    this.parentElement.appendChild(this.divFullControl);
+    this.inputFile.addEventListener('change', (ev) => { this.loadFile(ev); });
+    this.inputCrop.addEventListener('click', (ev) => {
+      //https://github.com/fengyuanchen/cropperjs#getcroppedcanvasoptions
+      if (!this.canvasUpload.cropper) {
+        alert('please selected an image...');
+      }
+      else {
+        this.canvasUpload.cropper.getCroppedCanvas({
+          height: this.outputHeight,
+          imageSmoothingEnabled: false,
+        }).toBlob((blob) => {
+          this.outputFile = new File([blob], "cropped.image.png", { lastModified: new Date().getTime(), type: blob.type });
+          //auto download
+          this.download();
+        });
+      }
     });
   }
 
@@ -129,7 +174,7 @@ export class ImageEditorControl {
    */
   setValue(values) {
     // store any data your control needs to store
-    this.labelText.innerText = values.name;
+    //this.labelText.innerText = values.name;
     //this.input.value = values.value;
   }
 
@@ -146,7 +191,10 @@ export class ImageEditorControl {
    * Return values if control needs to output data.
    */
   getValue() {
-    return { value: this.input.value };
+    return {
+      value: this.inputFile.value,
+      outputFile: this.outputFile
+    };
   }
 }
 

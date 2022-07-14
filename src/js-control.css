@@ -1,27 +1,38 @@
 /* Example CSS for our example control */
 
-.my-label-wrapper {
-  padding: 4px 8px 16px;
-  /* display: flex; */
-  /* flex-direction: column; */
+.cropper-wrapper {
+  background: white;
+  border: dashed lightskyblue 1px;
+  padding: 4px 8px 42px;
   height: 600px;
   width: 480px;
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva,
-    Verdana, sans-serif;
-  background: #fff;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', 'sans-serif';
 }
 
-.my-label-text {
-  color: #333;
+.cropper-wrapper-text {
+  color: darkslategray;
   font-size: 15px;
 }
 
-.my-input {
-  font-size: 18px;
+.common-input {
+  font-size: 15px;
   color: black;
   background: #ddd;
   border-radius: 3px;
   padding: 4px 6px;
-  border: solid 1px #ccc;
-  /* border: solid 1px #999; */
+  border: solid 1px silver;
+}
+
+.divCropper{
+  max-height: 100%;
+  display: block;
+}
+
+.controls-wrapper{
+  background: white;
+  border: dashed lightskyblue 1px;
+  padding: 4px 8px 42px;
+  height: 120px;
+  width: 480px;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', 'sans-serif';
 }
